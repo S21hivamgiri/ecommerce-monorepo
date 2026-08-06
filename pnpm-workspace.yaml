@@ -1,0 +1,13 @@
+## Blocks or permits specific dependencies from compiling binary code locally.
+allowBuilds:
+#Blocks this package from compiling native binaries.
+  '@parcel/watcher': false
+  #Explicitly permits esbuild to run its installation scripts specific to OS
+  esbuild: true
+  #Prevents the lmdb database wrapper from building its native C++ binding during installation.
+  lmdb: false
+  #Disables the compilation of the native acceleration module for msgpackr (used for searlizing of datastrucure to smaller byte)
+  msgpackr-extract: false
+packages:
+#Gateway component to be gerated
+  - "gateway"

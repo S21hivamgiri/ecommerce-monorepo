@@ -84,3 +84,18 @@ npm install -g @bazel/bazelisk
 # Confirm Node 22+, Python 3.11+, JDK 17+, and Docker are installed
 node -v && python3 --version && java -version && docker --version
 ```
+
+## What is pnpm-workspace.yaml
+
+**pnpm-workspace.yaml** defines the root of a monorepo and tells PNPM where to find your sub-projects
+
+## What is MODULE.baze
+
+**MODULE.bazel**MODULE.bazel is the central configuration file for Bzlmod, Bazel's modern dependency management system. It does following purpose:  
+
+- **Defines the Module**: It specifies your project's name, version, and compatibility levels.Manages Centralized - **Dependencies**: It fetches official Bazel rules (like rules_js or rules_go) directly from the Bazel Central - Registry (BCR) with strict version locking.
+- **Configures Extensions**: It allows you to run "Module Extensions," which translate ecosystem-specific lockfiles (like pnpm-lock.yaml) into Bazel-compatible targets.
+
+## What is BUILD.bazel
+
+**BUILD.bazel**: a configuration file that tells Bazel how to compile, test, or package code inside a specific directory.Every directory containing a BUILD.bazel file is recognized by Bazel as a package, which is the fundamental unit of code in the Bazel ecosystem.
