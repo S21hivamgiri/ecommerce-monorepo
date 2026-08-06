@@ -1,0 +1,1 @@
+# Root package. Domain boundaries are declared here so every service's BUILD file can reference them.
