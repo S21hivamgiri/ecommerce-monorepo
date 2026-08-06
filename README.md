@@ -6,7 +6,7 @@ the language that fits it (see root architecture doc for the reasoning):
 @author: Shivam Kumar Giri @S21hivamgiri
 @email: <shivamagiri2015@gmail.com>
 
-```
+```bash
 gateway/                    Node/TS   -> API Gateway
 services/
     auth-service/            Java    
@@ -99,3 +99,22 @@ node -v && python3 --version && java -version && docker --version
 ## What is BUILD.bazel
 
 **BUILD.bazel**: a configuration file that tells Bazel how to compile, test, or package code inside a specific directory.Every directory containing a BUILD.bazel file is recognized by Bazel as a package, which is the fundamental unit of code in the Bazel ecosystem.
+
+## How to test bazel
+
+  try following command
+
+  ```bash
+    bazel build //...
+  ```
+
+  This may geneate few few Directories:
+  **bazel-bin**: A shortcut that points directly to the latest successful compilation outputs
+  **bazel-out**: This is the heart of Bazel's output. It contains all compiled assets, generated code, and bundled JavaScript/TypeScript files. Bazel mirrors your project's folder structure inside it.
+  **bazel-testlogs**: Contains the results, cache info, and console outputs (test.log files) of every test target you execute via bazel test
+  **bazel-{name of repo directory}** A shortcut pointing to the execution root of your workspace.
+  In Windows consider a single letter monorepo directory in root of drive to prevent long-name issue during compilation
+  
+## What is REPO.bzl file
+
+A Starlark source file commonly used to define custom repository rules or macros that manage external dependencies.

@@ -1,0 +1,6 @@
+
+ignore_directories([
+    "**/node_modules",      # Automatically hides all nested pnpm/npm package folders
+    ".git",                 # Prevents Bazel from tracking massive Git history trees
+    
+])
