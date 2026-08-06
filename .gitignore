@@ -6,3 +6,6 @@
 
 bazel*
 MODULE.bazel.lock
+
+node_modules
+gateway/node_modules

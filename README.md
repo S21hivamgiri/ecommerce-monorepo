@@ -119,7 +119,7 @@ node -v && python3 --version && java -version && docker --version
 
 A Starlark source file commonly used to define custom repository rules or macros that manage external dependencies.
 
-## What is pnpm-lock.yaml.
+## What is pnpm-lock.yaml
 
 **pnpm-lock.yaml** is the single source of truth for your project's dependencies
 Execute install after adding file to generate all dependencies.
