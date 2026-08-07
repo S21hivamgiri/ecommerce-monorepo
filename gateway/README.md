@@ -1,4 +1,4 @@
-# Gateway foe E-commerce
+# Gateway for E-commerce
 
 Route incoming traffic, handle SSL termination, rate limiting, request validation, and API aggregation.
 @author: Shivam Kumar Giri [@S21hivamgiri](https://github.com/S21hivamgiri)
@@ -10,6 +10,10 @@ bazel run //gateway:gateway
 #command to build gateway
 bazel build //gateway:gateway
 ```
+
+See local host :
+
+**[http:localhost:8080/health](http:localhost:8080/health)**
 
 Functional Requirements:
 ---TODO--
