@@ -5,3 +5,9 @@ startup --output_user_root=D:/o
 startup --windows_enable_symlinks
 # disables any runfile trees creation and instead only copies the input manifest to the output manifest
 build --enable_runfiles
+# Each language toolchain resolves independently, so remote-cache friendly
+build --remote_cache_compression
+#Couseir is crashing the spring so setting it to false do fix
+build --repo_env=COURSIER_PROGRESS=false
+run --repo_env=COURSIER_PROGRESS=false
+fetch --repo_env=COURSIER_PROGRESS=false

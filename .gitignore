@@ -6,6 +6,7 @@
 
 bazel*
 MODULE.bazel.lock
+*maven_install.json
 
 node_modules
 gateway/node_modules

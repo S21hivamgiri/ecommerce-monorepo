@@ -9,5 +9,6 @@ allowBuilds:
   #Disables the compilation of the native acceleration module for msgpackr (used for searlizing of datastrucure to smaller byte)
   msgpackr-extract: false
 packages:
-#Gateway component to be gerated
+#Gateway component to be generated
   - "gateway"
+  - "services/auth-service"
