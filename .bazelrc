@@ -1,1 +1,7 @@
 build --enable_bzlmod
+# Choosing custom output directory to prevent it randomly choosing directory
+startup --output_user_root=D:/o
+# Enable window symlinks for ease of created symbiolic links 
+startup --windows_enable_symlinks
+# disables any runfile trees creation and instead only copies the input manifest to the output manifest
+build --enable_runfiles

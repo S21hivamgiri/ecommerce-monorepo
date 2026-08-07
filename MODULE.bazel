@@ -12,4 +12,23 @@ bazel_dep(name = "aspect_rules_ts", version = "3.9.2")
 bazel_dep(name = "bazel_skylib", version = "1.9.2")
 # high-performance Bazel ruleset designed to compile JavaScript and TypeScript files using the Rust-based SWC (Speedy Web Compiler)
 bazel_dep(name = "aspect_rules_swc", version = "2.7.6")
+# foundation ruleset for running Node.js, JavaScript, and TypeScript tools inside Bazel.
+bazel_dep(name = "rules_nodejs", version = "6.7.5")
 
+#  bridge between the Node.js ecosystem (PNPM) and the Bazel build system.
+#loads a special script called a Module Extension from the aspect_rules_js ruleset.
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
+#runs the parsing engine on your lockfile.
+npm.npm_translate_lock(
+    name = "npm",
+    pnpm_lock = "//:pnpm-lock.yaml",
+)
+#exposes the newly generated @npm repository to the rest of your local project.
+use_repo(npm, "npm")
+
+
+rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")
+rules_ts_ext.deps(
+    ts_version_from = "//gateway:package.json",
+)
+use_repo(rules_ts_ext, "npm_typescript")
