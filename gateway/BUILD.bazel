@@ -5,8 +5,22 @@ load("@aspect_rules_swc//swc:defs.bzl", "swc")
 
 npm_link_all_packages(name = "node_modules")
 
+ts_project(
+    name = "gateway_ts",
+    srcs = glob(["src/**/*.ts"]),
+    tsconfig = "tsconfig.json",
+    root_dir = "src",
+    out_dir = "dist",
+    transpiler = swc,
+    validate = False,
+    deps = [
+        ":node_modules/express",
+    ],
+)
+
 js_binary(
     name = "gateway",
-    data = ["package.json"],
+    entry_point = ":gateway_ts",
+    data = [":gateway_ts", "package.json"],
     visibility = ["//:all_services"],
 )

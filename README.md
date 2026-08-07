@@ -1,4 +1,4 @@
-# E-commerce monorepo (Bazel)
+# E-commerce monorepo in Bazel workspace
 
 One Bazel workspace, organized by **business domain**, each domain built with
 the language that fits it (see root architecture doc for the reasoning):
@@ -83,13 +83,32 @@ npm install -g @bazel/bazelisk
 
 # Confirm Node 22+, Python 3.11+, JDK 17+, and Docker are installed
 node -v && python3 --version && java -version && docker --version
+
+
+#Build all targets
+bazel build //...
+#Test all target
+bazel test //...
+# Clean bazel cache
+bazel clean --expunge
+#Execution for Node.js Gateway
+bazel run //gateway:gateway                                         # :8080
+```
+
+## What is pnpm-lock.yaml
+
+**pnpm-lock.yaml** is the single source of truth for your project's dependencies
+Execute install after adding file to generate all dependencies.
+
+```bash
+  pnpm install
 ```
 
 ## What is pnpm-workspace.yaml
 
 **pnpm-workspace.yaml** defines the root of a monorepo and tells PNPM where to find your sub-projects
 
-## What is MODULE.baze
+## What is MODULE.bazel
 
 **MODULE.bazel**MODULE.bazel is the central configuration file for Bzlmod, Bazel's modern dependency management system. It does following purpose:  
 
@@ -118,12 +137,3 @@ node -v && python3 --version && java -version && docker --version
 ## What is REPO.bzl file
 
 A Starlark source file commonly used to define custom repository rules or macros that manage external dependencies.
-
-## What is pnpm-lock.yaml
-
-**pnpm-lock.yaml** is the single source of truth for your project's dependencies
-Execute install after adding file to generate all dependencies.
-
-```bash
-  pnpm install
-```
