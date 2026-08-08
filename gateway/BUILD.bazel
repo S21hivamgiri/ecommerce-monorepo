@@ -6,8 +6,8 @@ load("@aspect_rules_swc//swc:defs.bzl", "swc")
 npm_link_all_packages(name = "node_modules")
 
 ts_project(
-    name = "gateway_ts",
-    srcs = glob(["src/**/*.ts"]),
+    name = "index_ts",
+    srcs = ["src/index.ts"],
     tsconfig = "tsconfig.json",
     root_dir = "src",
     out_dir = "dist",
@@ -15,12 +15,27 @@ ts_project(
     validate = False,
     deps = [
         ":node_modules/express",
+        ":node_modules/http-proxy-middleware",
+        ":node_modules/cors",
+        ":node_modules/helmet",
+        ":node_modules/morgan",
+        ":util_ts"
     ],
 )
 
 js_binary(
     name = "gateway",
-    entry_point = ":gateway_ts",
-    data = [":gateway_ts", "package.json"],
+    entry_point = ":index_ts",
+    data = [":index_ts", "package.json"],
     visibility = ["//:all_services"],
+)
+
+ts_project(
+     name = "util_ts",
+    srcs = ["src/util.ts"],
+    tsconfig = "tsconfig.json",
+    root_dir = "src",
+    out_dir = "dist",
+    transpiler = swc,
+    validate = False,
 )
