@@ -28,7 +28,6 @@ services/
 
 frontend/web-app/           Angular 
 libs/
-    java-common/            shared Java utilities (health checks, JSON, logging)
     proto/                  shared gRPC contracts, used across languages
 ```
 
@@ -80,10 +79,11 @@ registry package resolution, or PyPI's full index, so I couldn't run
 ```bash
 # Install Bazelisk (manages the right Bazel version for you)
 npm install -g @bazel/bazelisk
+#ibazel for refelcting changes during dev env like nodemon, respawn if crashed.
+npm install -g @bazel/ibazel
 
 # Confirm Node 22+, Python 3.11+, JDK 17+, and Docker are installed
 node -v && python3 --version && java -version && docker --version
-
 
 #Build all targets
 bazel build //...
@@ -92,7 +92,9 @@ bazel test //...
 # Clean bazel cache
 bazel clean --expunge
 #Execution for Node.js Gateway
-bazel run //gateway:gateway                                         # :8080
+bazel run //gateway:gateway   # :8080
+#Ibazel for reflecting changes if crashed like nodemon
+ibazel run //gateway:gateway  # :8080                                      
 ```
 
 ## What is pnpm-lock.yaml
