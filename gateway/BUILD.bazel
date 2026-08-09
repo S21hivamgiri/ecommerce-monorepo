@@ -1,41 +1,44 @@
-load("@npm//:defs.bzl", "npm_link_all_packages")
-load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
 load("@aspect_rules_js//js:defs.bzl", "js_binary")
 load("@aspect_rules_swc//swc:defs.bzl", "swc")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+load("@npm//:defs.bzl", "npm_link_all_packages")
 
 npm_link_all_packages(name = "node_modules")
 
 ts_project(
     name = "index_ts",
     srcs = ["src/index.ts"],
-    tsconfig = "tsconfig.json",
-    root_dir = "src",
     out_dir = "dist",
+    root_dir = "src",
     transpiler = swc,
+    tsconfig = "tsconfig.json",
     validate = False,
     deps = [
-        ":node_modules/express",
-        ":node_modules/http-proxy-middleware",
         ":node_modules/cors",
+        ":node_modules/express",
         ":node_modules/helmet",
+        ":node_modules/http-proxy-middleware",
         ":node_modules/morgan",
-        ":util_ts"
+        ":utils_ts",
     ],
 )
 
 js_binary(
     name = "gateway",
+    data = [
+        "package.json",
+        ":index_ts",
+    ],
     entry_point = ":index_ts",
-    data = [":index_ts", "package.json"],
     visibility = ["//:all_services"],
 )
 
 ts_project(
-     name = "util_ts",
-    srcs = ["src/util.ts"],
-    tsconfig = "tsconfig.json",
-    root_dir = "src",
+    name = "utils_ts",
+    srcs = glob(["src/utils/**/*ts"]),
     out_dir = "dist",
+    root_dir = "src/utils",
     transpiler = swc,
+    tsconfig = "tsconfig.json",
     validate = False,
 )
