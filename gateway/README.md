@@ -13,10 +13,18 @@ bazel build //gateway:gateway
 
 See local host :
 
+## Server
+
+**[http:localhost:8080](http:localhost:8080)**
+
+## Healthcheck
+
 **[http:localhost:8080/health](http:localhost:8080/health)**
 
-Functional Requirements:
+## Functional Requirements
+
 ---TODO--
 
-Non Functional Requirements.
+## Non Functional Requirements
+
 ---TODO--

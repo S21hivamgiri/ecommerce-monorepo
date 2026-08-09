@@ -13,10 +13,24 @@ bazel run //services/auth-service:auth_service
 
 See local host :
 
-**[http:localhost:8081/health](http:localhost:8081/health)**
+## Server
 
-Functional Requirements:
+**[http:localhost:8081](http:localhost:8081)**  #only for Development
+or if all the servers are up
+
+**[http:localhost:8080/auth](http:localhost:8080/auth)**
+
+## HealthCheck
+
+**[http:localhost:8081/health](http:localhost:8081/health)**  #only for Development
+or if all the servers are up
+
+**[http:localhost:8080/auth/health](http:localhost:8080/auth/health)**
+
+## Requirements
+
 ---TODO--
 
-Non Functional Requirements.
+## Non Functional Requirements
+
 ---TODO--
