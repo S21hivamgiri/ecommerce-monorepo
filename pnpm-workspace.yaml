@@ -10,5 +10,6 @@ allowBuilds:
   msgpackr-extract: false
 packages:
 #Gateway component to be generated
+  - "."
   - "gateway"
   - "services/auth-service"
