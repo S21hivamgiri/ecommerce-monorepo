@@ -3,8 +3,8 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import { servicesMap } from "./utils/services.js";
-import { rateLimitAndTimeout } from './utils/rate-limiter.js'
+import { services } from "./utils/services.js";
+import { rateLimitAndTimeout } from "./utils/rate-limiter.js";
 
 const port = Number(process.env.PORT ?? 8080);
 const app: Application = express();
@@ -26,17 +26,13 @@ app.get("/", (_req, res) => {
   res.end();
 });
 
-
 // Apply the rate limit and timeout middleware to the proxy
 app.use(rateLimitAndTimeout);
 
-app.use(
-  "/auth",
-  createProxyMiddleware({
-    target: servicesMap.get("auth"),
-    changeOrigin: true,
-  }),
-);
+for (const [path, target] of Object.entries(services)) {
+  app.use(path, createProxyMiddleware({ target, changeOrigin: true }));
+}
+
 app.use((_req, res) => {
   res.status(404).json({
     code: 404,
