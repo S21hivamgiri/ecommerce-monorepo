@@ -9,13 +9,13 @@ the language that fits it (see root architecture doc for the reasoning):
 ```bash
 gateway/                    Node/TS   -> API Gateway
 services/
-    auth-service/            Java    
-    order-service/           Java    
-    payment-service/         Java    
-    inventory-service/       Java    
-    user-service/            Java    
-    shipping-service/        Java    
-    discount-service/        Java
+    auth-service/            Java Spring Boot   
+    order-service/           Java Spring Boot   
+    payment-service/         Java Spring Boot   
+    inventory-service/       Java Spring Boot   
+    user-service/            Java Spring Boot   
+    shipping-service/        Java Spring Boot   
+    discount-service/        Java Spring Boot
 
     chat-service/           Node/TS 
     catalog-service/        Node/TS 

@@ -1,8 +1,10 @@
 # Auth Service for E-commerce
 
-Identity and access management, user authentication, OAuth2/JWT token issuance, role-based access control (RBAC)
+Identity and access management, user authentication, OAuth2/JWT token issuance, role-based access control (RBAC).
 @author: Shivam Kumar Giri [@S21hivamgiri](https://github.com/S21hivamgiri)
 @email: <shivamagiri2015@gmail.com>
+
+Used **Java Spring** Boot for auth server as it offers comprehensive, native protection against OWASP top vulnerabilities
 
 ```bash
 #command to run auth service
