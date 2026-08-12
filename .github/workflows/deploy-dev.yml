@@ -25,7 +25,10 @@ jobs:
         run: |
           chmod +x tools/detect-changed-services.sh
           PREV_SHA=$(git rev-parse HEAD~1)
+          echo "Base commit: $PREV_SHA"
+          echo "Head commit: ${{ github.sha }}"
           SERVICES=$(tools/detect-changed-services.sh "$PREV_SHA" "${{ github.sha }}" | tr '\n' ' ')
+          echo "Detected services: '$SERVICES'"
           echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
 
   build-test-push:
@@ -41,7 +44,15 @@ jobs:
         run: |
           TARGETS=""
           for svc in ${{ needs.detect-changes.outputs.services }}; do
-            TARGETS="$TARGETS //services/$svc:tests "
+          if [ "$svc" = "gateway" ]; then
+            continue
+          fi
+          TARGETS="$TARGETS //services/$svc:tests "
           done
           echo "${{ needs.detect-changes.outputs.services }}" | grep -qw gateway && TARGETS="$TARGETS //gateway:tests"
+          echo "----------------$TARGETS"
+          if [ -z "$(echo "$TARGETS" | xargs)" ]; then
+            echo "No test targets found to run."
+            exit 0
+          fi
           bazel test $TARGETS --test_output=errors
