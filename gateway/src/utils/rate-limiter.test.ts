@@ -1,6 +1,6 @@
 import { test, describe, beforeEach, afterEach, mock, Mock } from "node:test";
 import assert from "node:assert/strict";
-import { rateLimitAndTimeout, requestStore, deleteIP } from "./rate-limiter.js"; // Adjust path as needed
+import { rateLimitAndTimeout} from "./rate-limiter.js"; // Adjust path as needed
 import { Request, Response, NextFunction } from "express";
 
 describe("rateLimitAndTimeout Middleware", () => {
