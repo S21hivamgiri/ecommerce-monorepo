@@ -50,9 +50,17 @@ js_test(
     visibility = ["//visibility:private"],
 )
 
+js_test(
+    name = "rate_limiter_test",
+    data = [":utils_ts"],
+    entry_point = "src/utils/rate-limiter.test.js",
+    visibility = ["//visibility:private"],
+)
+
 test_suite(
     name = "tests",
     tests = [
         ":services_test",
+        ":rate_limiter_test",
     ],
 )

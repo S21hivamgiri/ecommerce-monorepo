@@ -5,12 +5,12 @@ const interval = 60 * 1000; // Time window in milliseconds (1 minute)
 const rateLimit = 15; // Max requests per minute
 
 // Reset request count for each IP address every 'interval' milliseconds
-setInterval(() => {
-  for (const [ip, timestamps] of requestStore.entries()) {
+const timer = setInterval(() => {
+  for (const [ip, _] of requestStore.entries()) {
     requestStore.delete(ip); // Reset request count for each IP address
   }
 }, interval);
-
+timer.unref();
 // Middleware function for rate limiting and timeout handling using Fixed Window Counter
 export function rateLimitAndTimeout(
   req: Request,
