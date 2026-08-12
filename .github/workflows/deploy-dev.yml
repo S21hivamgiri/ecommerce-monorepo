@@ -1,0 +1,46 @@
+name: Deploy dev
+
+# Auto-deploys to the dev namespace whenever main is updated (i.e. right
+# after a PR merges). Reuses the same bazel-diff logic as build.yml so a
+# merge that only touched catalog-service doesn't restart all 14 pods.
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: bazel-runner
+  cancel-in-progress: false
+
+jobs:
+  detect-changes:
+    runs-on: self-hosted
+    outputs:
+      services: ${{ steps.diff.outputs.services }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: diff
+        run: |
+          PREV_SHA=$(git rev-parse HEAD~1)
+          SERVICES=$(tools/detect-changed-services.sh "$PREV_SHA" "${{ github.sha }}" | tr '\n' ' ')
+          echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
+
+  build-test-push:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.services != ''
+    runs-on: self-hosted
+    outputs:
+      services: ${{ needs.detect-changes.outputs.services }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test impacted targets
+        run: |
+          TARGETS=""
+          for svc in ${{ needs.detect-changes.outputs.services }}; do
+            TARGETS="$TARGETS //services/$svc:tests "
+          done
+          echo "${{ needs.detect-changes.outputs.services }}" | grep -qw gateway && TARGETS="$TARGETS //gateway:tests"
+          bazel test $TARGETS --test_output=errors
