@@ -85,6 +85,9 @@ npm install -g @bazel/ibazel
 # Confirm Node 22+, Python 3.11+, JDK 17+, and Docker are installed
 node -v && python3 --version && java -version && docker --version
 
+#Setup docker images require like redis postgres or mongodb
+docker compose up -d
+
 #Build all targets
 bazel build //...
 #Test all target

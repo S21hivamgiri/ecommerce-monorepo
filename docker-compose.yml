@@ -1,0 +1,18 @@
+# Infra dependencies only — the app services themselves run via `bazel run`,
+# not docker-compose, so Bazel's caching/incrementality still applies.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: shivamShop
+      POSTGRES_PASSWORD: monorepo
+      POSTGRES_DB: eCommerce
+    ports: ["5432:5432"]
+
+  mongo:
+    image: mongo:7
+    ports: ["27017:27017"]
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
