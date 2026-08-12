@@ -23,6 +23,7 @@ jobs:
 
       - id: diff
         run: |
+          chmod +x tools/detect-changed-services.sh
           PREV_SHA=$(git rev-parse HEAD~1)
           SERVICES=$(tools/detect-changed-services.sh "$PREV_SHA" "${{ github.sha }}" | tr '\n' ' ')
           echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
