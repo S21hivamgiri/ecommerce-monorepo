@@ -1,14 +1,14 @@
 name: Deploy dev
 
-# Auto-deploys to the dev namespace whenever main is updated (i.e. right
-# after a PR merges). Reuses the same bazel-diff logic as build.yml so a
-# merge that only touched catalog-service doesn't restart all 14 pods.
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 concurrency:
-  group: bazel-runner
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -24,10 +24,22 @@ jobs:
       - id: diff
         run: |
           chmod +x tools/detect-changed-services.sh
-          PREV_SHA=$(git rev-parse HEAD~1)
-          echo "Base commit: $PREV_SHA"
-          echo "Head commit: ${{ github.sha }}"
-          SERVICES=$(tools/detect-changed-services.sh "$PREV_SHA" "${{ github.sha }}" | tr '\n' ' ')
+          
+          # Safely resolve the base SHA depending on event type
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          elif [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ] && [ -n "${{ github.event.before }}" ]; then
+            BASE_SHA="${{ github.event.before }}"
+          else
+            BASE_SHA=$(git rev-parse HEAD~1)
+          fi
+
+          HEAD_SHA="${{ github.sha }}"
+          
+          echo "Base commit: $BASE_SHA"
+          echo "Head commit: $HEAD_SHA"
+          
+          SERVICES=$(tools/detect-changed-services.sh "$BASE_SHA" "$HEAD_SHA" | tr '\n' ' ')
           echo "Detected services: '$SERVICES'"
           echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
 
@@ -43,16 +55,24 @@ jobs:
       - name: Test impacted targets
         run: |
           TARGETS=""
+          
           for svc in ${{ needs.detect-changes.outputs.services }}; do
-          if [ "$svc" = "gateway" ]; then
-            continue
-          fi
-          TARGETS="$TARGETS //services/$svc:tests "
+            if [ "$svc" = "gateway" ]; then
+              continue
+            fi
+            TARGETS="$TARGETS //services/$svc:tests "
           done
-          echo "${{ needs.detect-changes.outputs.services }}" | grep -qw gateway && TARGETS="$TARGETS //gateway:tests"
-          echo "----------------$TARGETS"
+
+          # Safe check for gateway without breaking 'set -e'
+          if echo "${{ needs.detect-changes.outputs.services }}" | grep -qw "gateway"; then
+            TARGETS="$TARGETS //gateway:tests "
+          fi
+
+          echo "Target string: '$TARGETS'"
+
           if [ -z "$(echo "$TARGETS" | xargs)" ]; then
             echo "No test targets found to run."
             exit 0
           fi
+
           bazel test $TARGETS --test_output=errors
