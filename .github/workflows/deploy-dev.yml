@@ -13,13 +13,26 @@ concurrency:
 
 jobs:
   detect-changes:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       services: ${{ steps.diff.outputs.services }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      # ubuntu-latest is a fresh VM every run — nothing persists between
+      # jobs, so bazel/bazel-diff have to be installed here every time
+      # (unlike your self-hosted runner, where you install them once).
+      - name: Install bazel + bazel-diff
+        run: |
+          npm install -g @bazel/bazelisk
+          mkdir -p "$HOME/bin"
+          curl -sSL -o "$HOME/bin/bazel-diff.jar" \
+            https://github.com/Tinder/bazel-diff/releases/latest/download/bazel-diff_deploy.jar
+          printf '#!/usr/bin/env bash\nexec java -jar "%s/bin/bazel-diff.jar" "$@"\n' "$HOME" > "$HOME/bin/bazel-diff"
+          chmod +x "$HOME/bin/bazel-diff"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
 
       - id: diff
         run: |
@@ -38,19 +51,27 @@ jobs:
           
           echo "Base commit: $BASE_SHA"
           echo "Head commit: $HEAD_SHA"
-          
+
           SERVICES=$(tools/detect-changed-services.sh "$BASE_SHA" "$HEAD_SHA" | tr '\n' ' ')
           echo "Detected services: '$SERVICES'"
           echo "services=$SERVICES" >> "$GITHUB_OUTPUT"
 
+  # -----------------------------------------------------------------
+  # Cloud machine #2 — test + build + push, only the impacted services.
+  # Docker is preinstalled on ubuntu-latest, so no extra setup needed
+  # for the docker build/push steps.
+  # -----------------------------------------------------------------
   build-test-push:
     needs: detect-changes
     if: needs.detect-changes.outputs.services != ''
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       services: ${{ needs.detect-changes.outputs.services }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install bazel
+        run: npm install -g @bazel/bazelisk
 
       - name: Test impacted targets
         run: |
