@@ -1,0 +1,5 @@
+
+# Choosing custom output directory to prevent it randomly choosing directory
+startup --output_user_root=D:/o
+# Enable window symlinks for ease of created symbiolic links 
+startup --windows_enable_symlinks
