@@ -26,7 +26,7 @@ jobs:
       # (unlike your self-hosted runner, where you install them once).
       - name: Install bazel + bazel-diff
         run: |
-          npm install -g @bazel/bazelisk
+          sudo npm install -g @bazel/bazelisk
           mkdir -p "$HOME/bin"
           curl -sSL -o "$HOME/bin/bazel-diff.jar" \
             https://github.com/Tinder/bazel-diff/releases/latest/download/bazel-diff_deploy.jar
