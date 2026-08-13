@@ -26,7 +26,8 @@ jobs:
       # (unlike your self-hosted runner, where you install them once).
       - name: Install bazel + bazel-diff
         run: |
-          sudo npm install -g @bazel/bazelisk
+          sudo curl -sSL -o /usr/local/bin/bazel https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64
+          sudo chmod +x /usr/local/bin/bazel
           mkdir -p "$HOME/bin"
           curl -sSL -o "$HOME/bin/bazel-diff.jar" \
             https://github.com/Tinder/bazel-diff/releases/latest/download/bazel-diff_deploy.jar
@@ -71,7 +72,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install bazel
-        run: npm install -g @bazel/bazelisk
+        run: |
+          sudo curl -sSL -o /usr/local/bin/bazel https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64
+          sudo chmod +x /usr/local/bin/bazel
 
       - name: Test impacted targets
         run: |
