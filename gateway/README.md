@@ -9,9 +9,16 @@ Used **Node.js ESModule** for Gatwway implementation as it wins real time and in
 
 ```bash
 #command to run gateway
-bazel run //gateway:gateway
+bazel run //gateway:gateway                              #Linux
+bazel --bazelrc=.bazelrc.windows run //gateway:gateway   #Windows
+
 #command to build gateway
-bazel build //gateway:gateway
+bazel build //gateway:gateway                            #Linux                     
+bazel --bazelrc=.bazelrc.windows build //gateway:gateway #Windows
+
+#execute the local gateway unit test cases
+bazel test //gateway:tests                               #Linux
+bazel --bazelrc=.bazelrc.windows  test //gateway:tests   #Windows
 ```
 
 See local host :

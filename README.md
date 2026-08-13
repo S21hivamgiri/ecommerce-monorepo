@@ -89,15 +89,23 @@ node -v && python3 --version && java -version && docker --version
 docker compose up -d
 
 #Build all targets
-bazel build //...
+bazel build //...                                       #in Linux
+bazel --bazelrc=.bazelrc.windows build //...            #in windows
+
 #Test all target
-bazel test //...
+bazel test //...                                        #in Linux
+bazel --bazelrc=.bazelrc.windows test //...             #in windows
+
 # Clean bazel cache
-bazel clean --expunge
-#Execution for Node.js Gateway
-bazel run //gateway:gateway   # :8080
+bazel clean --expunge                                   #in Linux
+bazel --bazelrc=.bazelrc.windows clean --expunge        #in windows
+
+# Execution for Node.js Gateway
+bazel run //gateway:gateway                              # :8080   in Linux                           
+bazel --bazelrc=.bazelrc.windows run //gateway:gateway   # :8080   in windows
 #Ibazel for reflecting changes if crashed like nodemon
-ibazel run //gateway:gateway  # :8080                                      
+ibazel run //gateway:gateway                             # :8080   in Linux         
+ibazel --bazelrc=.bazelrc.windows run //gateway:gateway  # :8080   in windows                                   
 ```
 
 ## What is pnpm-lock.yaml
@@ -130,6 +138,7 @@ Execute install after adding file to generate all dependencies.
 
   ```bash
     bazel build //...
+    bazel --bazelrc=.bazelrc.windows build //...
   ```
 
   This may geneate few few Directories:
