@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 // Object to store request counts for each IP address
 const requestStore = new Map<string, number>();
 const interval = 60 * 1000; // Time window in milliseconds (1 minute)
-const rateLimit = 17; // Max requests per minute
+const rateLimit = 16; // Max requests per minute
 
 // Reset request count for each IP address every 'interval' milliseconds
 const timer = setInterval(() => {
