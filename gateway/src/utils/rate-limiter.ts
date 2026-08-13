@@ -11,6 +11,12 @@ const timer = setInterval(() => {
   }
 }, interval);
 timer.unref();
+
+// Function to clear the request store for testing purposes
+export function clearRequestStore() {
+  requestStore.clear();
+}
+
 // Middleware function for rate limiting and timeout handling using Fixed Window Counter
 export function rateLimitAndTimeout(
   req: Request,

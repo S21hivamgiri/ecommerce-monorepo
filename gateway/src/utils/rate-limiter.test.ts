@@ -1,6 +1,6 @@
 import { test, describe, beforeEach, afterEach, mock, Mock } from "node:test";
 import assert from "node:assert/strict";
-import { rateLimitAndTimeout} from "./rate-limiter.js"; // Adjust path as needed
+import { rateLimitAndTimeout, clearRequestStore } from "./rate-limiter.js"; // Adjust path as needed
 import { Request, Response, NextFunction } from "express";
 
 describe("rateLimitAndTimeout Middleware", () => {
@@ -59,14 +59,16 @@ describe("rateLimitAndTimeout Middleware", () => {
     assert.equal(nextCalled, true);
   });
 
-  test("should reject the 16th request with 429 status", () => {
+  test("should reject the (n+1)th request with 429 status", () => {
+    // Use a fresh IP to avoid conflicts with previous tests
+    const freshReq = { ip: "192.168.1.100" } as Request;
     // Send 15 allowed requests
     for (let i = 0; i < 15; i++) {
-      rateLimitAndTimeout(req as Request, res as Response, next);
+      rateLimitAndTimeout(freshReq, res as Response, next);
     }
 
     nextCalled = false;
-    rateLimitAndTimeout(req as Request, res as Response, next);
+    rateLimitAndTimeout(freshReq, res as Response, next);
 
     assert.equal(nextCalled, false);
     assert.equal(res.status.mock.calls[0].arguments[0], 429);
@@ -76,5 +78,62 @@ describe("rateLimitAndTimeout Middleware", () => {
       message: "Rate limit exceeded. Try after sometime",
       data: null,
     });
+  });
+
+  test("should clear requestStore after 60 seconds and allow new requests", () => {
+    // Use a fresh IP to avoid conflicts with previous tests
+    const freshReq = { ip: "172.16.0.50" } as Request;
+
+    // Send 15 allowed requests to hit the limit
+    for (let i = 0; i < 15; i++) {
+      rateLimitAndTimeout(freshReq, res as Response, next);
+    }
+
+    // Verify the 16th request is rejected
+    nextCalled = false;
+    rateLimitAndTimeout(freshReq, res as Response, next);
+    assert.equal(nextCalled, false, "16th request should be rejected");
+    assert.equal(res.status.mock.calls[0].arguments[0], 429);
+
+    // Simulate the 60-second interval by clearing the requestStore
+    // This is what the setInterval does every 60 seconds
+    clearRequestStore();
+
+    // Reset the mock calls to check fresh behavior
+    res.status = mock.fn(function (this: any, code: number) {
+      return this;
+    });
+    res.json = mock.fn(function (this: any, data: any) {
+      return this;
+    });
+
+    // After clearing, the first request should now be allowed
+    nextCalled = false;
+    rateLimitAndTimeout(freshReq, res as Response, next);
+    assert.equal(
+      nextCalled,
+      true,
+      "First request after interval should be allowed (requestStore cleared)",
+    );
+
+    // Verify that multiple requests are allowed again
+    for (let i = 1; i < 15; i++) {
+      nextCalled = false;
+      rateLimitAndTimeout(freshReq, res as Response, next);
+      assert.equal(
+        nextCalled,
+        true,
+        `Request ${i + 1} should be allowed after interval`,
+      );
+    }
+
+    // And the 16th should be rejected again
+    nextCalled = false;
+    rateLimitAndTimeout(freshReq, res as Response, next);
+    assert.equal(
+      nextCalled,
+      false,
+      "16th request in new interval should be rejected",
+    );
   });
 });
